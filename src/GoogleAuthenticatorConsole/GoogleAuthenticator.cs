@@ -6,22 +6,21 @@ using System.Text;
 
 public class GoogleAuthenticator
 {
-    const int IntervalLength = 30;
-    const int PinLength = 6;
-    static readonly int PinModulo = (int)Math.Pow(10, PinLength);
-    static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+    const int intervalLength = 30;
+    const int pinLength = 6;
+    static readonly int pinModulo = (int)Math.Pow(10, pinLength);
+    static readonly DateTime unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     const string allowedSecretKeyLetters = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz01234567";
 
     /// <summary>
     ///   Number of intervals that have elapsed.
     /// </summary>
-    static long CurrentInterval
+    static long currentInterval
     {
         get
         {
-            var ElapsedSeconds = (long)Math.Floor((DateTime.UtcNow - UnixEpoch).TotalSeconds);
-
-            return ElapsedSeconds/IntervalLength;
+            var elapsedSeconds = (long)Math.Floor((DateTime.UtcNow - unixEpoch).TotalSeconds);
+            return elapsedSeconds/intervalLength;
         }
     }
 
@@ -54,13 +53,19 @@ public class GoogleAuthenticator
         return stringBuilder.ToString();
     }
 
+    public string GetEncodedSecretKey(string secretKey)
+    {
+        var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
+        return Encoder.Base32Encode(secretKeyBytes);
+    }
+
     /// <summary>
     ///   Generates a pin for the given key.
     /// </summary>
     public string GeneratePin(string secretKey)
     {
-        var privateKeyBytes = Encoding.UTF8.GetBytes(secretKey);
-        return GeneratePin(privateKeyBytes, CurrentInterval);
+        var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
+        return GeneratePin(secretKeyBytes, currentInterval);
     }
 
     /// <summary>
@@ -68,68 +73,69 @@ public class GoogleAuthenticator
     /// </summary>
     static string GeneratePin(byte[] key, long counter)
     {
-        const int SizeOfInt32 = 4;
+        const int sizeOfInt32 = 4;
 
-        var CounterBytes = BitConverter.GetBytes(counter);
+        var counterBytes = BitConverter.GetBytes(counter);
 
         if (BitConverter.IsLittleEndian)
         {
             //spec requires bytes in big-endian order
-            Array.Reverse(CounterBytes);
+            Array.Reverse(counterBytes);
         }
 
-        var Hash = new HMACSHA1(key).ComputeHash(CounterBytes);
-        var Offset = Hash[Hash.Length - 1] & 0xF;
+        var hash = new HMACSHA1(key).ComputeHash(counterBytes);
+        var offset = hash[hash.Length - 1] & 0xF;
 
-        var SelectedBytes = new byte[SizeOfInt32];
-        Buffer.BlockCopy(Hash, Offset, SelectedBytes, 0, SizeOfInt32);
+        var selectedBytes = new byte[sizeOfInt32];
+        Buffer.BlockCopy(hash, offset, selectedBytes, 0, sizeOfInt32);
 
         if (BitConverter.IsLittleEndian)
         {
             //spec interprets bytes in big-endian order
-            Array.Reverse(SelectedBytes);
+            Array.Reverse(selectedBytes);
         }
 
-        var SelectedInteger = BitConverter.ToInt32(SelectedBytes, 0);
+        var selectedInteger = BitConverter.ToInt32(selectedBytes, 0);
 
         //remove the most significant bit for interoperability per spec
-        var TruncatedHash = SelectedInteger & 0x7FFFFFFF;
+        var truncatedHash = selectedInteger & 0x7FFFFFFF;
 
         //generate number of digits for given pin length
-        var Pin = TruncatedHash%PinModulo;
+        var pin = truncatedHash % pinModulo;
 
-        return Pin.ToString(CultureInfo.InvariantCulture).PadLeft(PinLength, '0');
+        return pin.ToString(CultureInfo.InvariantCulture).PadLeft(pinLength, '0');
     }
 
     #region Nested type: Encoder
 
     static class Encoder
     {
+        const string base32Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+        const string urlEncodeAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+
         /// <summary>
         ///   Url Encoding (with upper-case hexadecimal per OATH specification)
         /// </summary>
         public static string UrlEncode(string value)
         {
-            const string UrlEncodeAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
-            var Builder = new StringBuilder();
-
+            var builder = new StringBuilder();
             for (var i = 0; i < value.Length; i++)
             {
-                var Symbol = value[i];
+                var symbol = value[i];
 
-                if (UrlEncodeAlphabet.IndexOf(Symbol) != -1)
+                if (urlEncodeAlphabet.IndexOf(symbol) != -1)
                 {
-                    Builder.Append(Symbol);
+                    builder.Append(symbol);
                 }
                 else
                 {
-                    Builder.Append('%');
-                    Builder.Append(((int)Symbol).ToString("X2"));
+                    builder.Append('%');
+                    builder.Append(((int)symbol).ToString("X2"));
                 }
             }
 
-            return Builder.ToString();
+            return builder.ToString();
         }
 
         /// <summary>
@@ -137,53 +143,48 @@ public class GoogleAuthenticator
         /// </summary>
         public static string Base32Encode(byte[] data)
         {
-            const int InByteSize = 8;
-            const int OutByteSize = 5;
-            const string Base32Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-
+            const int inByteSize = 8;
+            const int outByteSize = 5;
             int i = 0, index = 0;
-            var Builder = new StringBuilder((data.Length + 7)*InByteSize/OutByteSize);
+            var builder = new StringBuilder((data.Length + 7)*inByteSize/outByteSize);
 
             while (i < data.Length)
             {
-                int CurrentByte = data[i];
-                int Digit;
+                int currentByte = data[i];
+                int digit;
 
                 //Is the current digit going to span a byte boundary?
-                if (index > (InByteSize - OutByteSize))
+                if (index > (inByteSize - outByteSize))
                 {
-                    int NextByte;
-
+                    int nextByte;
                     if ((i + 1) < data.Length)
                     {
-                        NextByte = data[i + 1];
+                        nextByte = data[i + 1];
                     }
                     else
                     {
-                        NextByte = 0;
+                        nextByte = 0;
                     }
 
-                    Digit = CurrentByte & (0xFF >> index);
-                    index = (index + OutByteSize)%InByteSize;
-                    Digit <<= index;
-                    Digit |= NextByte >> (InByteSize - index);
+                    digit = currentByte & (0xFF >> index);
+                    index = (index + outByteSize)%inByteSize;
+                    digit <<= index;
+                    digit |= nextByte >> (inByteSize - index);
                     i++;
                 }
                 else
                 {
-                    Digit = (CurrentByte >> (InByteSize - (index + OutByteSize))) & 0x1F;
-                    index = (index + OutByteSize)%InByteSize;
+                    digit = (currentByte >> (inByteSize - (index + outByteSize))) & 0x1F;
+                    index = (index + outByteSize)%inByteSize;
 
                     if (index == 0)
                     {
                         i++;
                     }
                 }
-
-                Builder.Append(Base32Alphabet[Digit]);
+                builder.Append(base32Alphabet[digit]);
             }
-
-            return Builder.ToString();
+            return builder.ToString();
         }
     }
     #endregion
