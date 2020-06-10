@@ -1,0 +1,13 @@
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\bin\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.exe
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\bin\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.deps.json
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\bin\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.runtimeconfig.json
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\bin\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.runtimeconfig.dev.json
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\bin\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.dll
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\bin\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.pdb
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\obj\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.csprojAssemblyReference.cache
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\obj\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.csproj.CoreCompileInputs.cache
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\obj\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.AssemblyInfoInputs.cache
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\obj\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.AssemblyInfo.cs
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\obj\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.dll
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\obj\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.pdb
+D:\MyWork\DotNet\GoogleAuthenticatorConsole\src\GoogleAuthenticatorConsole\obj\Debug\netcoreapp3.1\GoogleAuthenticatorConsole.genruntimeconfig.cache
