@@ -16,7 +16,7 @@ namespace GoogleAuthenticatorConsole
             var pinInput = Console.ReadLine();
 
             var googleAuthenticator = new GoogleAuthenticator();
-            var currentPin = googleAuthenticator.GeneratePin(secretKeyInput);
+            var currentPin = googleAuthenticator.GetCurrentPin(secretKeyInput);
 
             Console.WriteLine($"\nIs SecretKey: {secretKeyInput} has current PIN: {pinInput}?");
             Console.WriteLine($"Result: {pinInput == currentPin}. (Current Pin: {currentPin})");
