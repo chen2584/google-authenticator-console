@@ -60,18 +60,18 @@ public class GoogleAuthenticator
     }
 
     /// <summary>
-    ///   Generates a pin for the given key.
+    ///   Get current pin of the given key.
     /// </summary>
-    public string GeneratePin(string secretKey)
+    public string GetCurrentPin(string secretKey)
     {
         var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
-        return GeneratePin(secretKeyBytes, currentInterval);
+        return GetCurrentPin(secretKeyBytes, currentInterval);
     }
 
     /// <summary>
     ///   Generates a pin by hashing a key and counter.
     /// </summary>
-    static string GeneratePin(byte[] key, long counter)
+    static string GetCurrentPin(byte[] key, long counter)
     {
         const int sizeOfInt32 = 4;
 
