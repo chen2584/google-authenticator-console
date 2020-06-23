@@ -9,17 +9,28 @@ namespace GoogleAuthenticatorConsole
             //var googleAuthenticator = new GoogleAuthenticator();
             //Console.WriteLine(googleAuthenticator.GenerateSecretKey(10));
 
-            Console.Write("Input SecretKey: ");
-            var secretKeyInput = Console.ReadLine();
-
-            Console.Write("Input Pin: ");
-            var pinInput = Console.ReadLine();
-
             var googleAuthenticator = new GoogleAuthenticator();
-            var currentPin = googleAuthenticator.GetCurrentPin(secretKeyInput);
+            var secretKey = googleAuthenticator.GenerateSecretKey();
+            Console.WriteLine($"SecretKey is {secretKey}");
 
-            Console.WriteLine($"\nIs SecretKey: {secretKeyInput} has current PIN: {pinInput}?");
-            Console.WriteLine($"Result: {pinInput == currentPin}. (Current Pin: {currentPin})");
+            var encodedSecretKey = googleAuthenticator.GetEncodedSecretKey(secretKey);
+            Console.WriteLine($"Encoded SecretKey is {encodedSecretKey}");
+            Console.WriteLine($"Decoded SecretKey is {googleAuthenticator.GetDecodedSecretKey(encodedSecretKey)}");
+            Console.ReadLine();
+
+            // var googleAuthenticator = new GoogleAuthenticator();
+
+            // Console.Write("Input SecretKey: ");
+            // var secretKeyInput = Console.ReadLine();
+
+            // Console.Write("Input Pin: ");
+            // var pinInput = Console.ReadLine();
+
+            // var googleAuthenticator = new GoogleAuthenticator();
+            // var currentPin = googleAuthenticator.GetPin(secretKeyInput, DateTime.UtcNow);
+
+            // Console.WriteLine($"\nIs SecretKey: {secretKeyInput} has current PIN: {pinInput}?");
+            // Console.WriteLine($"Result: {pinInput == currentPin}. (Current Pin: {currentPin})");
         }
     }
 }
